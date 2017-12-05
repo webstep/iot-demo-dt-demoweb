@@ -1,5 +1,4 @@
 # IoT DT DemoWeb
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.3.2.
 This is a simple webpage to listening on sensor in DT.
 Used addding effects like sounds and simple presentation of sensordata
 
