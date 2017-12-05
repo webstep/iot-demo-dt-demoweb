@@ -8,7 +8,7 @@ The file apikey.ns need a variable "ApiKey" defining the ApiKey to use for autho
 
 This file is not in git for security reasons.
 
-filename: apikey.ns
+filename: src/app/apikey.ts
 ```
 const ApiKey = '<insert ApiKey from DT here>';
 ```
