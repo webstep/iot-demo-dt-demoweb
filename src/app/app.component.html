@@ -1,0 +1,10 @@
+<div align="center">
+  <p class="smallText">{{title}}</p>
+  <div id="startlisten">
+    <button (click)="startListen()" class="button">Start lytting</button>
+  </div>
+  <div id="stoplisten" style="display:none">
+    <button (click)="stopListen()" class="button">Stans lytting</button>
+  </div>
+  <audio id="soundplayer" src="app/sound/lys_tone.mp3"></audio>
+</div>
