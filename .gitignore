@@ -44,3 +44,10 @@ yarn-error.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# generated source files
+/src/app/*.js
+/src/app/*.map
+/src/app/thing/*.js
+/src/app/thing/*.map
+
