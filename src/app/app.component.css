@@ -35,3 +35,12 @@
   background-color: #f44336;
   color: white;
 }
+td {
+  font-size: 28px;
+  font-weight: bold;
+}
+.menubuttons {
+  font-family: "Georgia", Georgia, serif;
+  font-size: 20px;
+  font-weight: bold;
+}

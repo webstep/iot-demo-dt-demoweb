@@ -8,3 +8,47 @@
   </div>
   <audio id="soundplayer" src="assets/lys_tone.mp3"></audio>
 </div>
+<div align="center">
+<button class="menubuttons" (click)="showTemp()">Temperature</button>
+<button class="menubuttons" (click)="showDoor()">Door (Proximity)</button>
+<button class="menubuttons" (click)="showAlarm()">Alarm (Proximity)</button>
+<button class="menubuttons" (click)="showLysorgel()">Lysorgel (Touch)</button>
+</div>
+<br><br>
+
+<table align="center" width="50%" border="0">
+  <tr *ngIf="show_temp">
+    <td align="right" width="50%" valign="top">Temperatur&nbsp;</td>
+    <td><div *ngIf="tempThing" id="tempvalue">{{tempThing.state.properties.temperature}} ˚C</div></td>
+  </tr>
+  <tr *ngIf="show_door">
+    <td align="right" width="50%" valign="top">Dør&nbsp;</td>
+    <td align="center">
+      <div *ngIf="doorThing"><div id="statusDoor">{{statusDoor(doorThing.state.properties.object_present)}}</div> <br>
+         <img id="door_img" src="assets/{{doorThing.state.properties.object_present}}.png" width="100%" height="50px" style="opacity: 0.5">
+      </div>
+    </td>
+  </tr>
+  <tr *ngIf="show_alarm">
+    <td align="right" width="50%" valign="top">Alarm&nbsp;</td>
+    <td align="center">
+      <div *ngIf="doorThing"><div id="statusAlarm">{{statusAlarm(alarmThing.state.properties.object_present)}}</div> <br>
+        <img id="alarm_img" src="assets/{{doorThing.state.properties.object_present}}.png" width="100%" height="50px" style="opacity: 0.5">
+      </div>
+    </td>
+  </tr>
+  <tr *ngIf="show_lysorgel">
+    <td colspan="2" valign="top">
+      <table border="0" width="100%">
+        <tr>
+          <td colspan="3" align="center">Lysorgel</td>
+        </tr>
+        <tr>
+          <td><img id="touch1_img" src="assets/pink.png" width="100%" height="50px" style="opacity: 0.1"></td>
+          <td><img id="touch2_img" src="assets/purple.png" width="100%" height="50px" style="opacity: 0.1"></td>
+          <td><img id="touch3_img" src="assets/blue.png" width="100%" height="50px" style="opacity: 0.1"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

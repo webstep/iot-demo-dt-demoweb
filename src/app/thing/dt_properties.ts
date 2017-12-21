@@ -1,6 +1,6 @@
 export class DTProperties {
   temperature: string;
-  object_present: string;
+  object_present: boolean;
   touch: boolean;
   last_pressed: string;
   rssi: string;
