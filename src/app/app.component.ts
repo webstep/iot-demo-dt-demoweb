@@ -38,14 +38,7 @@ export class AppComponent implements OnInit {
 
   constructor(http: Http) {
     this.dtapi = new DtApi(http);
-    // Get initial temp-sensor
-    this.dtapi.getDevice(DEVICE_ID_TEMP).subscribe(
-      (newDevice: Device) => { this.tempSensor = newDevice; },
-      (error: any) => { console.error(' Error: Unable to get dtThing with id ' + DEVICE_ID_TEMP + ' reason:' + error); },
-      () => {
-        // console.log('http request ended successfully');
-      }
-    );
+    this.dtapi.getDevice(DEVICE_ID_TEMP).subscribe( (newDevice: Device) => { this.tempSensor = newDevice; });
     this.dtapi.getDevice(DEVICE_ID_ALARM).subscribe( (newDevice: Device) => { this.alarmSensor = newDevice; });
     this.dtapi.getDevice(DEVICE_ID_DOOR).subscribe( (newDevice: Device) => { this.doorSensor = newDevice; });
     this.dtapi.getDevice(DEVICE_ID_TOUCH_1).subscribe( (newDevice: Device) => { this.touchSensor1 = newDevice; });
@@ -128,17 +121,17 @@ export class AppComponent implements OnInit {
 
       if ( device_id === DEVICE_ID_TOUCH_1 ) {
         console.log('play lys_tone.pm3');
-        this.touch1_blinkImage();
+        this.touch_blinkImage('touch1_img');
         this.playSound('lys_tone.mp3');
 
       } else if (device_id === DEVICE_ID_TOUCH_2 ) {
         console.log('play middels_tone.pm3');
-        this.touch2_blinkImage();
+        this.touch_blinkImage('touch2_img');
         this.playSound('middels_tone.mp3');
 
       } else if ( device_id === DEVICE_ID_TOUCH_3 ) {
         console.log('play dyp_tone.pm3');
-        this.touch3_blinkImage();
+        this.touch_blinkImage('touch3_img');
         this.playSound('dyp_tone.mp3');
 
       } else if ( device_id === DEVICE_ID_ALARM && event.data.objectPresent ) {
@@ -151,9 +144,10 @@ export class AppComponent implements OnInit {
           this.playSound('alarm.mp3');
         }
 
-      } else if ( device_id === DEVICE_ID_TEMP && event.data.temperature) {
-        this.tempSensor.reported.temperature.value = event.data.temperature.value;
-        this.updateTemp( event.data.temperature.value + '');
+      } else if ( device_id === DEVICE_ID_TEMP ) {
+        if ( event.data.temperature ) {
+          this.tempSensor.reported.temperature.value = event.data.temperature.value;
+        }
 
       } else if ( device_id === DEVICE_ID_DOOR  && event.data.objectPresent ) {
         this.doorSensor.reported.objectPresent.state =  event.data.objectPresent.state;
@@ -166,6 +160,7 @@ export class AppComponent implements OnInit {
           this.playSound('dingdong.mp3');
           console.log('TODO: show that door is closed on webpage');
         }
+
       } else {
         console.log('Unknown sensor "' + device_id + '"');
         console.log(JSON.stringify(event, null, ' '));
@@ -219,12 +214,6 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private updateTemp(newTemp: string): void {
-    const el = document.getElementById('tempvalue');
-    if (el) {
-      el.innerText = newTemp + ' ˚C';
-    }
-  }
   private updateDoorImg(object_present: string): void {
     let el = document.getElementById( 'door_img');
     if (el) {
@@ -235,6 +224,7 @@ export class AppComponent implements OnInit {
       el.textContent = this.statusDoor(object_present);
     }
   }
+
   private updateAlarmImg(object_present: string): void {
     let el = document.getElementById( 'alarm_img');
     if (el) {
@@ -246,25 +236,11 @@ export class AppComponent implements OnInit {
     }
   }
 
-  public touch1_blinkImage(): void {
-    const el = document.getElementById('touch1_img');
+  public touch_blinkImage(imgName: string): void {
+    const el = document.getElementById(imgName);
     if (el) {
       el.style.opacity = '1.00';
-      setTimeout(() => { el.style.opacity = '0.00'; }, 3000);
-    }
-  }
-  public touch2_blinkImage(): void {
-    const el = document.getElementById('touch2_img');
-    if (el) {
-      el.style.opacity = '1.00';
-      setTimeout(() => { el.style.opacity = '0.00'; }, 3000);
-    }
-  }
-  public touch3_blinkImage(): void {
-    const el = document.getElementById('touch3_img');
-    if (el) {
-      el.style.opacity = '1.00';
-      setTimeout(() => { el.style.opacity = '0.00'; }, 3000);
+      setTimeout(() => { el.style.opacity = '0.10'; }, 3000);
     }
   }
 

@@ -19,7 +19,7 @@
 <table align="center" width="50%" border="0">
   <tr *ngIf="show_temp">
     <td align="right" width="50%" valign="top">Temperatur&nbsp;</td>
-    <td><div *ngIf="tempSensor" id="tempvalue">{{tempSensor.reported.temperature.value}} ˚C</div></td>
+    <td><div *ngIf="tempSensor" id="tempvalue">{{tempSensor.reported.temperature.value.toFixed(2)}} ˚C</div></td>
   </tr>
   <tr *ngIf="show_door">
     <td align="right" width="50%" valign="top">Dør&nbsp;</td>
