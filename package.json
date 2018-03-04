@@ -24,8 +24,8 @@
     "@angular/platform-browser-dynamic": "^4.2.4",
     "@angular/router": "^4.2.4",
     "core-js": "^2.5.1",
-    "eventsource": "^1.0.5",
     "ng-event-source": "^1.0.9",
+    "npm": "^5.7.1",
     "rxjs": "^5.5.3",
     "zone.js": "^0.8.14"
   },
