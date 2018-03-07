@@ -146,6 +146,7 @@ export class AppComponent implements OnInit {
 
       } else if ( device_id === DEVICE_ID_TEMP ) {
         if ( event.data.temperature ) {
+          console.log('Updating temp from ' + this.tempSensor.reported.temperature.value + '˙C => ' + event.data.temperature.value + '˙C');
           this.tempSensor.reported.temperature.value = event.data.temperature.value;
         }
 
