@@ -16,7 +16,7 @@ This file is not in git for security reasons.
 filename: src/app/apikey.ts
 ```
 export const BASIC_AUTH = 'Basic <usr:pwd Base64Encoded>;
-export const PROJECT_ID = '<DisruotiveTechnology ProjectID>';
+export const PROJECT_ID = '<DisruptiveTechnology ProjectID>';
 ```
 
 ## Development server
