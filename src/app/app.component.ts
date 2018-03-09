@@ -3,9 +3,8 @@ import { Http } from '@angular/http';
 import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/map';
 import { DtApi } from './dt/dt_api';
-import { Event } from './dt/dt_streamresult';
+import { Event, Device } from './dt/dt_model';
 import { LogService } from './log.service';
-import { Device } from './dt/dt_device';
 
 // The ID of the DT sensors to listen for events for
 const DEVICE_ID_TOUCH_1 = 'b6oiv957rihk096jph4g';

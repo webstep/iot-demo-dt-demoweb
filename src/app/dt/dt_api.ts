@@ -1,7 +1,7 @@
 import { Headers, Http } from '@angular/http';
 import { EventSourcePolyfill } from 'ng-event-source';
 import { BASIC_AUTH, PROJECT_ID } from '../apikey';
-import { Event, EventData } from './dt_streamresult';
+import { Event } from './dt_model';
 
 const API_PROTO = 'https://';
 const API_URL = 'api.disruptive-technologies.com/v2beta1/projects/';
