@@ -4,15 +4,15 @@ import 'rxjs/add/operator/toPromise';
 import 'rxjs/add/operator/map';
 import { DtApi } from './dt/dt_api';
 import { Event, Device } from './dt/dt_model';
-import { LogService } from './log.service';
+import { LOGLEVEL_ERROR, LogService} from './log.service';
 
 // The ID of the DT sensors to listen for events for
 const DEVICE_ID_TOUCH_1 = 'b6oiv957rihk096jph4g';
 const DEVICE_ID_TOUCH_2 = 'b6oiv957rihk096jphh0';
 const DEVICE_ID_TOUCH_3 = 'b6oiv957rihk096jpgsg';
-const DEVICE_ID_ALARM = 'b6sfpst7rihg0dm4uvm0'; // ALARM
-const DEVICE_ID_DOOR = 'b6sfpt57rihg0dm4v0kg'; // DØR
-const DEVICE_ID_TEMP = 'b6sfpst7rihg0dm4uvr0'; // TEMP - Lab Temp
+const DEVICE_ID_PROXIMITY_ALARM = 'b6sfpst7rihg0dm4uvm0';
+const DEVICE_ID_PROXIMITY_DINGDONG = 'b6sfpt57rihg0dm4v0kg';
+const DEVICE_ID_TEMPERATURE     = 'b6sfpst7rihg0dm4uvr0';
 
 @Component({
   selector: 'app-root',
@@ -25,151 +25,28 @@ export class AppComponent implements OnInit {
   public title = 'IoT Demo webapp';
   public tempSensor: Device;
   public alarmSensor: Device;
-  public doorSensor: Device;
+  public dingDongSensor: Device;
   public touchSensor1: Device;
   public touchSensor2: Device;
   public touchSensor3: Device;
 
   public show_temp = false;
-  public show_door = false;
+  public show_dingdong = false;
   public show_alarm = false;
-  public show_lysorgel = false;
+  public show_lightorgan = false;
 
-  constructor(http: Http) {
-    this.dtapi = new DtApi(http);
-    this.dtapi.getDevice(DEVICE_ID_TEMP).subscribe( (newDevice: Device) => { this.tempSensor = newDevice; });
-    this.dtapi.getDevice(DEVICE_ID_ALARM).subscribe( (newDevice: Device) => { this.alarmSensor = newDevice; });
-    this.dtapi.getDevice(DEVICE_ID_DOOR).subscribe( (newDevice: Device) => { this.doorSensor = newDevice; });
-    this.dtapi.getDevice(DEVICE_ID_TOUCH_1).subscribe( (newDevice: Device) => { this.touchSensor1 = newDevice; });
-    this.dtapi.getDevice(DEVICE_ID_TOUCH_2).subscribe( (newDevice: Device) => { this.touchSensor2 = newDevice; });
-    this.dtapi.getDevice(DEVICE_ID_TOUCH_3).subscribe( (newDevice: Device) => { this.touchSensor3 = newDevice; });
-  }
-
-  ngOnInit(): void {
-    if (LogService.info()) {
-      console.log('AppComponent initialized');
-    }
-  }
-
-  public stopListen(): void {
-    this.dtapi.stopListening();
-    this.showElement('startlisten');
-    this.hideElement('stoplisten');
-  }
-
-  showTemp(): void {
-    this.show_alarm = false;
-    this.show_door = false;
-    this.show_lysorgel = false;
-    this.show_temp = true;
-  }
-  showDoor(): void {
-    this.show_alarm = false;
-    this.show_door = true;
-    this.show_lysorgel = false;
-    this.show_temp = false;
-  }
-  showAlarm(): void {
-    this.show_alarm = true;
-    this.show_door = false;
-    this.show_lysorgel = false;
-    this.show_temp = false;
-  }
-  showLysorgel(): void {
-    this.show_alarm = false;
-    this.show_door = false;
-    this.show_lysorgel = true;
-    this.show_temp = false;
-  }
-
-  statusDoor(object_present: string): string {
-    let ret = 'Open';
-    if ('PRESENT' === object_present) {
-      ret = 'Closed';
-    }
-    return ret;
-  }
-  statusAlarm(object_present: string): string {
-    let ret = 'On';
-    if ('PRESENT' === object_present) {
-      ret = 'Off';
-    }
-    return ret;
-  }
-
-  private getDeviceIdFilter(): string {
+  static getDeviceIdFilter(): string {
     let str = '';
     str += 'device_ids=' + DEVICE_ID_TOUCH_1;
     str += '&device_ids=' + DEVICE_ID_TOUCH_2;
     str += '&device_ids=' + DEVICE_ID_TOUCH_3;
-    str += '&device_ids=' + DEVICE_ID_ALARM;
-    str += '&device_ids=' + DEVICE_ID_DOOR;
-    str += '&device_ids=' + DEVICE_ID_TEMP;
+    str += '&device_ids=' + DEVICE_ID_PROXIMITY_ALARM;
+    str += '&device_ids=' + DEVICE_ID_PROXIMITY_DINGDONG;
+    str += '&device_ids=' + DEVICE_ID_TEMPERATURE;
     return str;
   }
 
-  startListen(): void {
-    this.hideElement('startlisten');
-    this.showElement('stoplisten');
-
-    const callbackListenForEvents = (event: Event): void => {
-      const device_id = this.dtapi.getDeviceId(event.targetName);
-      if (LogService.trace()) {
-        console.log(JSON.stringify(event, null, ' '));
-      }
-
-      if ( device_id === DEVICE_ID_TOUCH_1 ) {
-        console.log('play lys_tone.pm3');
-        this.touch_blinkImage('touch1_img');
-        this.playSound('lys_tone.mp3');
-
-      } else if (device_id === DEVICE_ID_TOUCH_2 ) {
-        console.log('play middels_tone.pm3');
-        this.touch_blinkImage('touch2_img');
-        this.playSound('middels_tone.mp3');
-
-      } else if ( device_id === DEVICE_ID_TOUCH_3 ) {
-        console.log('play dyp_tone.pm3');
-        this.touch_blinkImage('touch3_img');
-        this.playSound('dyp_tone.mp3');
-
-      } else if ( device_id === DEVICE_ID_ALARM && event.data.objectPresent ) {
-        this.alarmSensor.reported.objectPresent.state = event.data.objectPresent.state;
-        this.updateAlarmImg(event.data.objectPresent.state);
-        if ( 'PRESENT' === event.data.objectPresent.state ) {
-          console.log('No alarm as long as object is present, object_present = ' + event.data.objectPresent.state);
-        } else {
-          console.log('play alarm.mp3 since object_present = ' + event.data.objectPresent.state);
-          this.playSound('alarm.mp3');
-        }
-
-      } else if ( device_id === DEVICE_ID_TEMP ) {
-        if ( event.data.temperature ) {
-          console.log('Updating temp from ' + this.tempSensor.reported.temperature.value + '˙C => ' + event.data.temperature.value + '˙C');
-          this.tempSensor.reported.temperature.value = event.data.temperature.value;
-        }
-
-      } else if ( device_id === DEVICE_ID_DOOR  && event.data.objectPresent ) {
-        this.doorSensor.reported.objectPresent.state =  event.data.objectPresent.state;
-        this.updateDoorImg(event.data.objectPresent.state);
-        if ( 'PRESENT' === event.data.objectPresent.state) {
-          console.log('Door is closing');
-          console.log('TODO: show that door is closing on webpage');
-        } else {
-          console.log('Door is opening');
-          this.playSound('dingdong.mp3');
-          console.log('TODO: show that door is closed on webpage');
-        }
-
-      } else {
-        console.log('Unknown sensor "' + device_id + '"');
-        console.log(JSON.stringify(event, null, ' '));
-      }
-    };
-
-    this.dtapi.listenForEvents(callbackListenForEvents, this.getDeviceIdFilter());
-  }
-  private playSound(mp3file: string): void {
+  static playSound(mp3file: string): void {
     if ( LogService.trace()) {
       console.log('Trying to play a sound (' + mp3file + ')');
     }
@@ -186,7 +63,7 @@ export class AppComponent implements OnInit {
     player.play();
   }
 
-  private hideElement(id: string): void {
+  static hideElement(id: string): void {
     if ( LogService.trace() ) {
       console.log(id + ' => none');
     }
@@ -200,7 +77,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private showElement(id: string): void {
+  static showElement(id: string): void {
     if ( LogService.trace() ) {
       console.log( id + ' => block');
     }
@@ -214,26 +91,134 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private updateDoorImg(object_present: string): void {
-    let el = document.getElementById( 'door_img');
+  static updateDingDongImage(object_present: string): void {
+    const el = document.getElementById( 'dingdong_img');
     if (el) {
       el.getAttributeNode('src').value = 'assets/' + object_present + '.png';
-    }
-    el = document.getElementById('statusDoor');
-    if (el) {
-      el.textContent = this.statusDoor(object_present);
     }
   }
 
-  private updateAlarmImg(object_present: string): void {
-    let el = document.getElementById( 'alarm_img');
+  static updateAlarmImg(object_present: string): void {
+    const el = document.getElementById( 'alarm_img');
     if (el) {
       el.getAttributeNode('src').value = 'assets/' + object_present + '.png';
     }
-    el = document.getElementById('statusAlarm');
-    if (el) {
-      el.textContent = this.statusAlarm(object_present);
+  }
+
+  constructor(http: Http) {
+    this.dtapi = new DtApi(http);
+    this.dtapi.getDevice(DEVICE_ID_TEMPERATURE).subscribe( (newDevice: Device) => { this.tempSensor = newDevice; });
+    this.dtapi.getDevice(DEVICE_ID_PROXIMITY_ALARM).subscribe( (newDevice: Device) => { this.alarmSensor = newDevice; });
+    this.dtapi.getDevice(DEVICE_ID_PROXIMITY_DINGDONG).subscribe( (newDevice: Device) => { this.dingDongSensor = newDevice; });
+    this.dtapi.getDevice(DEVICE_ID_TOUCH_1).subscribe( (newDevice: Device) => { this.touchSensor1 = newDevice; });
+    this.dtapi.getDevice(DEVICE_ID_TOUCH_2).subscribe( (newDevice: Device) => { this.touchSensor2 = newDevice; });
+    this.dtapi.getDevice(DEVICE_ID_TOUCH_3).subscribe( (newDevice: Device) => { this.touchSensor3 = newDevice; });
+  }
+
+  ngOnInit(): void {
+    LogService.setLogLevel(LOGLEVEL_ERROR);
+    if (LogService.info()) {
+      console.log('AppComponent initialized');
     }
+  }
+
+  public stopListen(): void {
+    this.dtapi.stopListening();
+    AppComponent.showElement('startlisten');
+    AppComponent.hideElement('stoplisten');
+  }
+
+  showTemp(): void {
+    this.show_alarm = false;
+    this.show_dingdong = false;
+    this.show_lightorgan = false;
+    this.show_temp = true;
+  }
+  showDoor(): void {
+    this.show_alarm = false;
+    this.show_dingdong = true;
+    this.show_lightorgan = false;
+    this.show_temp = false;
+  }
+  showAlarm(): void {
+    this.show_alarm = true;
+    this.show_dingdong = false;
+    this.show_lightorgan = false;
+    this.show_temp = false;
+  }
+  showLysorgel(): void {
+    this.show_alarm = false;
+    this.show_dingdong = false;
+    this.show_lightorgan = true;
+    this.show_temp = false;
+  }
+
+  startListen(): void {
+    AppComponent.hideElement('startlisten');
+    AppComponent.showElement('stoplisten');
+
+    const callbackListenForEvents = (event: Event): void => {
+      const device_id = this.dtapi.getDeviceId(event.targetName);
+      if (LogService.trace()) {
+        console.log(JSON.stringify(event, null, ' '));
+      }
+
+      if ( device_id === DEVICE_ID_TOUCH_1 ) {
+        this.touch_blinkImage('touch1_img');
+        AppComponent.playSound('tone_light.mp3');
+
+      } else if (device_id === DEVICE_ID_TOUCH_2 ) {
+        this.touch_blinkImage('touch2_img');
+        AppComponent.playSound('tone_medium.mp3');
+
+      } else if ( device_id === DEVICE_ID_TOUCH_3 ) {
+        this.touch_blinkImage('touch3_img');
+        AppComponent.playSound('tone_dark.mp3');
+
+      } else if ( device_id === DEVICE_ID_PROXIMITY_ALARM && event.data.objectPresent ) {
+        this.alarmSensor.reported.objectPresent.state = event.data.objectPresent.state;
+        AppComponent.updateAlarmImg(event.data.objectPresent.state);
+        if ( 'PRESENT' === event.data.objectPresent.state ) {
+          if (LogService.debug()) {
+            console.log('No alarm as long as object is present, object_present = ' + event.data.objectPresent.state);
+          }
+        } else {
+          if (LogService.info()) {
+            console.log('play alarm.mp3 since object_present = ' + event.data.objectPresent.state);
+          }
+          AppComponent.playSound('alarm.mp3');
+        }
+
+      } else if ( device_id === DEVICE_ID_TEMPERATURE ) {
+        if ( event.data.temperature ) {
+          if (LogService.info()) {
+            console.log('Updating temp from ' + this.tempSensor.reported.temperature.value + '˙C => ' + event.data.temperature.value + '˙C');
+          }
+          this.tempSensor.reported.temperature.value = event.data.temperature.value;
+        }
+
+      } else if ( device_id === DEVICE_ID_PROXIMITY_DINGDONG  && event.data.objectPresent ) {
+        this.dingDongSensor.reported.objectPresent.state =  event.data.objectPresent.state;
+        AppComponent.updateDingDongImage(event.data.objectPresent.state);
+        if ( 'PRESENT' === event.data.objectPresent.state) {
+          if (LogService.trace()) {
+            console.log('TODO: show that DingDong is going from NOT_PRESENT to PRESENT on webpage');
+          }
+        } else {
+          AppComponent.playSound('dingdong.mp3');
+          if (LogService.trace()) {
+            console.log('TODO: show that door is closed on webpage');
+          }
+        }
+      } else {
+        if (LogService.error()) {
+          console.log('Unknown sensor "' + device_id + '"');
+          console.log(JSON.stringify(event, null, ' '));
+        }
+      }
+    };
+
+    this.dtapi.listenForEvents(callbackListenForEvents, AppComponent.getDeviceIdFilter());
   }
 
   public touch_blinkImage(imgName: string): void {

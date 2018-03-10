@@ -1,47 +1,47 @@
 <div align="center">
   <p class="smallText">{{title}}</p>
   <div id="startlisten">
-    <button (click)="startListen()" class="button">Start lytting</button>
+    <button (click)="startListen()" class="demoButtonRed">Start listening for Server Sent Events</button>
   </div>
   <div id="stoplisten" style="display:none">
-    <button (click)="stopListen()" class="button">Stans lytting</button>
+    <button (click)="stopListen()" class="demoButtonGreen">Stop listening for Server Sent Events</button>
   </div>
   <audio id="soundplayer" src="assets/lys_tone.mp3"></audio>
 </div>
 <div align="center">
-<button class="menubuttons" (click)="showTemp()">Temperature</button>
-<button class="menubuttons" (click)="showDoor()">Door (Proximity)</button>
-<button class="menubuttons" (click)="showAlarm()">Alarm (Proximity)</button>
-<button class="menubuttons" (click)="showLysorgel()">Lysorgel (Touch)</button>
+<button class="menubuttons" (click)="showTemp()">1</button>
+<button class="menubuttons" (click)="showDoor()">2</button>
+<button class="menubuttons" (click)="showAlarm()">3</button>
+<button class="menubuttons" (click)="showLysorgel()">4</button>
 </div>
 <br><br>
 
 <table align="center" width="50%" border="0">
   <tr *ngIf="show_temp">
-    <td align="right" width="50%" valign="top">Temperatur&nbsp;</td>
-    <td><div *ngIf="tempSensor" id="tempvalue">{{tempSensor.reported.temperature.value.toFixed(2)}} ˚C</div></td>
+    <td align="right" width="50%" valign="top">Temperature</td>
+    <td><div *ngIf="tempSensor" id="tempvalue">{{tempSensor.reported.temperature.value.toFixed(2)}}</div></td>
   </tr>
-  <tr *ngIf="show_door">
-    <td align="right" width="50%" valign="top">Dør&nbsp;</td>
+  <tr *ngIf="show_dingdong">
+    <td align="right" width="50%" valign="top">Ding-Dong</td>
     <td align="center">
-      <div *ngIf="doorSensor"><div id="statusDoor">{{statusDoor(doorSensor.reported.objectPresent.state)}}</div> <br>
-         <img id="door_img" src="assets/{{doorSensor.reported.objectPresent.state}}.png" width="100%" height="50px" style="opacity: 0.5">
+      <div *ngIf="dingDongSensor"><div id="statusDingDong">{{dingDongSensor.reported.objectPresent.state}}</div> <br>
+         <img id="dingdong_img" src="assets/{{dingDongSensor.reported.objectPresent.state}}.png" width="100%" height="50px" style="opacity: 0.5">
       </div>
     </td>
   </tr>
   <tr *ngIf="show_alarm">
-    <td align="right" width="50%" valign="top">Alarm&nbsp;</td>
+    <td align="right" width="50%" valign="top">Mona Lisa Alarm</td>
     <td align="center">
-      <div *ngIf="alarmSensor"><div id="statusAlarm">{{statusAlarm(alarmSensor.reported.objectPresent.state)}}</div> <br>
+      <div *ngIf="alarmSensor"><div id="statusAlarm">{{alarmSensor.reported.objectPresent.state}}</div> <br>
         <img id="alarm_img" src="assets/{{alarmSensor.reported.objectPresent.state}}.png" width="100%" height="50px" style="opacity: 0.5">
       </div>
     </td>
   </tr>
-  <tr *ngIf="show_lysorgel">
+  <tr *ngIf="show_lightorgan">
     <td colspan="2" valign="top">
       <table border="0" width="100%">
         <tr>
-          <td colspan="3" align="center">Lysorgel</td>
+          <td colspan="3" align="center">Close Encounters of the Third Kind</td>
         </tr>
         <tr>
           <td><img id="touch1_img" src="assets/pink.png" width="100%" height="50px" style="opacity: 0.1"></td>
